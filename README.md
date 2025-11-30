@@ -1,36 +1,82 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Stockly - Inventory Management for Small Vendors
 
-## Getting Started
+Stockly is a mobile-first inventory management SaaS designed specifically for small vendors (Instagram sellers, WhatsApp merchants, etc.) to track their stock, sales, and profits.
 
-First, run the development server:
+## 🚀 Live Demo
+**[https://stockly-qg7583t9z-abdullahi-golds-projects.vercel.app](https://stockly-qg7583t9z-abdullahi-golds-projects.vercel.app)**
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+## ✨ Key Features
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+- **📦 Inventory Tracking**: Easily add items, track quantities, and manage stock levels.
+- **💰 Profit Tracking**: Real-time calculation of total inventory value, potential revenue, and profit.
+- **🔔 Low Stock Alerts**: Automatic email notifications (via Resend) when items run low.
+- **🔐 Subscription Gating**:
+    - **Free Plan**: Limited to 15 items.
+    - **Pro Plan**: Unlimited items for ₦500/month (via Paystack).
+- **🌓 Dark Mode**: Beautiful, premium dark theme that syncs with system settings.
+- **📱 Mobile First**: Optimized for use on smartphones.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## 🛠️ Tech Stack
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+- **Framework**: [Next.js 15](https://nextjs.org/) (App Router)
+- **Language**: TypeScript
+- **Database & Auth**: [Supabase](https://supabase.com/)
+- **Styling**: [Tailwind CSS](https://tailwindcss.com/) + [shadcn/ui](https://ui.shadcn.com/)
+- **Payments**: [Paystack](https://paystack.com/)
+- **Emails**: [Resend](https://resend.com/)
+- **Deployment**: [Vercel](https://vercel.com/)
 
-## Learn More
+## ⚡ Getting Started
 
-To learn more about Next.js, take a look at the following resources:
+### Prerequisites
+- Node.js 18+
+- A Supabase project
+- A Paystack account
+- A Resend account
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+### Installation
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+1.  **Clone the repository**
+    ```bash
+    git clone https://github.com/goldestdev/stockly.git
+    cd stockly
+    ```
 
-## Deploy on Vercel
+2.  **Install dependencies**
+    ```bash
+    npm install --legacy-peer-deps
+    ```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+3.  **Set up Environment Variables**
+    Create a `.env.local` file in the root directory and add the following:
+    ```env
+    NEXT_PUBLIC_SUPABASE_URL=your_supabase_url
+    NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
+    NEXT_PUBLIC_PAYSTACK_PUBLIC_KEY=your_paystack_public_key
+    RESEND_API_KEY=your_resend_api_key
+    ```
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+4.  **Run the development server**
+    ```bash
+    npm run dev
+    ```
+
+5.  Open [http://localhost:3000](http://localhost:3000) in your browser.
+
+## 🗄️ Database Schema
+
+The project uses Supabase with the following main tables:
+- `profiles`: Stores user details, subscription plan (`free` or `pro`), and theme preference.
+- `items`: Stores inventory items, quantities, costs, and prices.
+
+## 🚀 Deployment
+
+The app is optimized for deployment on Vercel.
+1.  Push code to GitHub.
+2.  Import project to Vercel.
+3.  Add the Environment Variables in Vercel Project Settings.
+4.  Deploy!
+
+## 📄 License
+
+This project is open source and available under the [MIT License](LICENSE).
