@@ -29,9 +29,9 @@ export default function UpgradePage() {
 
   const componentProps = {
     email,
-    amount: 500 * 100, // 500 Naira in kobo
+    amount: 1500 * 100, // 1500 Naira in kobo
     publicKey: process.env.NEXT_PUBLIC_PAYSTACK_PUBLIC_KEY || '',
-    text: "Upgrade Now - ₦500/mo",
+    text: "Upgrade Now - ₦1,500/mo",
     onSuccess: async () => {
       toast.success("Welcome to Pro! 🚀")
       await upgradeToPro()
@@ -110,7 +110,7 @@ export default function UpgradePage() {
 
             <h3 className="text-xl font-semibold mb-2 text-amber-600 dark:text-amber-400">Pro Plan</h3>
             <div className="flex items-baseline gap-1 mb-6">
-              <span className="text-5xl font-extrabold tracking-tight">₦500</span>
+              <span className="text-5xl font-extrabold tracking-tight">₦1,500</span>
               <span className="text-lg text-muted-foreground">/month</span>
             </div>
 
