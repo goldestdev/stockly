@@ -2,13 +2,12 @@ import { createClient } from '@/utils/supabase/server'
 import { redirect } from 'next/navigation'
 import { InventoryList } from '@/components/inventory-list'
 import { MetricsCards } from '@/components/metrics-cards'
-
 import { SalesChart } from '@/components/sales-chart'
 import { RecentSales } from '@/components/recent-sales'
 import { Button } from '@/components/ui/button'
-import { Plus } from 'lucide-react'
+import { Plus, Search, Bell } from 'lucide-react'
 import Link from 'next/link'
-import { DashboardNav } from '@/components/dashboard-nav'
+import { DashboardSidebar } from '@/components/dashboard-sidebar'
 
 export default async function Home() {
   const supabase = await createClient()
@@ -54,7 +53,7 @@ export default async function Home() {
     .order('created_at', { ascending: false })
     .limit(5)
 
-  // Aggregate sales by date
+  // Aggregate sales by date for chart
   const salesData = (chartSales || []).reduce((acc: any[], sale) => {
     const date = new Date(sale.created_at).toLocaleDateString('en-US', { weekday: 'short' })
     const existing = acc.find(item => item.date === date)
@@ -69,63 +68,73 @@ export default async function Home() {
   }, [])
 
   return (
-    <div className="min-h-screen bg-background pb-20">
-      {/* Header */}
-      <header className="sticky top-0 z-40 w-full border-b bg-background/80 backdrop-blur-md">
-        <div className="container flex h-16 items-center justify-between px-4 md:px-6 max-w-5xl mx-auto">
-          <div className="flex items-center gap-2">
-            <div className="h-8 w-8 rounded-lg bg-primary flex items-center justify-center text-white font-bold shadow-lg shadow-primary/20">S</div>
-            <div>
-              <h1 className="text-lg font-bold tracking-tight">Stockly</h1>
-              <p className="text-[10px] text-muted-foreground uppercase tracking-wider font-medium">
-                {profile?.plan === 'pro' ? 'Pro Plan' : 'Free Plan'}
-              </p>
-            </div>
-          </div>
-
-          <DashboardNav user={user} profile={profile} />
-        </div>
-      </header>
+    <div className="min-h-screen bg-background">
+      <DashboardSidebar userEmail={user.email} plan={profile?.plan} />
       
-      <main className="container px-4 md:px-6 py-8 max-w-5xl mx-auto space-y-8">
-        {/* Welcome Section */}
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-          <div>
-            <h2 className="text-3xl font-bold tracking-tight">Dashboard</h2>
+      <main className="md:pl-64 min-h-screen transition-all duration-200 ease-in-out">
+        {/* Header */}
+        <header className="sticky top-0 z-30 w-full border-b bg-background/80 backdrop-blur-md px-6 h-16 flex items-center justify-between">
+          <div className="flex items-center gap-4">
+            <h1 className="text-xl font-semibold tracking-tight">Dashboard</h1>
+            <span className="text-xs text-muted-foreground hidden md:inline-block">
+              {new Date().toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}
+            </span>
+          </div>
+          <div className="flex items-center gap-4">
+            <Button variant="ghost" size="icon" className="text-muted-foreground hover:text-foreground">
+              <Search className="h-5 w-5" />
+            </Button>
+            <Button variant="ghost" size="icon" className="text-muted-foreground hover:text-foreground relative">
+              <Bell className="h-5 w-5" />
+              <span className="absolute top-2 right-2 h-2 w-2 rounded-full bg-primary" />
+            </Button>
+            <Link href="/items/new">
+              <Button size="sm" className="bg-primary hover:bg-primary/90 text-white shadow-lg shadow-primary/20 transition-all hover:scale-105">
+                <Plus className="mr-2 h-4 w-4" />
+                Add Item
+              </Button>
+            </Link>
+          </div>
+        </header>
+
+        <div className="p-6 space-y-8 max-w-7xl mx-auto">
+          {/* Welcome Section */}
+          <div className="flex flex-col gap-2">
+            <h2 className="text-3xl font-bold tracking-tight">
+              Welcome back, {user.user_metadata.full_name?.split(' ')[0] || 'Vendor'} 👋
+            </h2>
             <p className="text-muted-foreground">
-              Welcome back, {user.user_metadata.full_name?.split(' ')[0] || 'Vendor'}. Here's what's happening today.
+              Here's what's happening with your store today.
             </p>
           </div>
-          <Link href="/items/new">
-            <Button size="lg" className="w-full md:w-auto bg-primary hover:bg-primary/90 text-white shadow-lg shadow-primary/20 transition-all hover:scale-105">
-              <Plus className="mr-2 h-5 w-5" />
-              Add New Item
-            </Button>
-          </Link>
-        </div>
 
-        {/* Metrics */}
+          {/* Metrics */}
+          <div className="animate-in fade-in slide-in-from-bottom-4 duration-500 delay-100">
+            <MetricsCards items={items || []} sales={allSales || []} />
+          </div>
 
-        <div className="animate-in fade-in slide-in-from-bottom-4 duration-500 delay-100 space-y-8">
-          <MetricsCards items={items || []} sales={allSales || []} />
-          <div className="grid gap-4 md:grid-cols-7">
+          {/* Charts & Recent Sales */}
+          <div className="grid gap-6 md:grid-cols-7 animate-in fade-in slide-in-from-bottom-4 duration-500 delay-200">
             <SalesChart data={salesData} />
             <RecentSales sales={recentSales || []} />
           </div>
-        </div>
-        
-        {/* Inventory List */}
-        <div className="space-y-4 animate-in fade-in slide-in-from-bottom-4 duration-500 delay-200">
-          <div className="flex items-center justify-between">
-            <h3 className="text-xl font-semibold tracking-tight">Inventory Items</h3>
-            <span className="text-sm text-muted-foreground bg-secondary px-2.5 py-0.5 rounded-full font-medium">
-              {items?.length || 0} Total
-            </span>
-          </div>
           
-          <div className="rounded-2xl border bg-card shadow-sm overflow-hidden">
-            <div className="p-1">
-              <InventoryList items={items || []} />
+          {/* Inventory List */}
+          <div className="space-y-4 animate-in fade-in slide-in-from-bottom-4 duration-500 delay-300" id="inventory">
+            <div className="flex items-center justify-between">
+              <div>
+                <h3 className="text-xl font-semibold tracking-tight">Inventory Items</h3>
+                <p className="text-sm text-muted-foreground">Manage your stock and prices</p>
+              </div>
+              <span className="text-sm text-muted-foreground bg-secondary px-2.5 py-0.5 rounded-full font-medium">
+                {items?.length || 0} Total
+              </span>
+            </div>
+            
+            <div className="rounded-xl border bg-card/50 backdrop-blur-sm shadow-sm overflow-hidden">
+              <div className="p-1">
+                <InventoryList items={items || []} />
+              </div>
             </div>
           </div>
         </div>
