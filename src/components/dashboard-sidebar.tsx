@@ -95,7 +95,7 @@ export function DashboardSidebar({ className, userEmail, plan }: SidebarProps) {
             {routes.map((route) => (
               <Link
                 key={route.href}
-                href={route.href === "/dashboard/inventory" ? "/dashboard#inventory" : route.href} // Temporary fix for single page
+                href={route.href}
                 onClick={() => setIsOpen(false)}
               >
                 <Button
