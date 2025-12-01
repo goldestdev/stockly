@@ -48,6 +48,18 @@ export async function addItem(formData: FormData) {
     }
   }
 
+  // Check for duplicates
+  const { data: existingItem } = await supabase
+    .from('items')
+    .select('id')
+    .eq('user_id', user.id)
+    .ilike('name', name)
+    .single()
+
+  if (existingItem) {
+    return { error: 'Item with this name already exists.' }
+  }
+
   const { error } = await supabase
     .from('items')
     .insert({
@@ -57,6 +69,76 @@ export async function addItem(formData: FormData) {
       selling_price,
       user_id: user.id
     })
+
+  if (error) {
+    return { error: error.message }
+  }
+
+  revalidatePath('/dashboard')
+  return { success: true }
+}
+
+export async function deleteItem(id: string) {
+  const supabase = await createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+  
+  if (!user) return { error: 'Not authenticated' }
+
+  const { error } = await supabase
+    .from('items')
+    .delete()
+    .eq('id', id)
+    .eq('user_id', user.id)
+
+  if (error) {
+    return { error: error.message }
+  }
+
+  revalidatePath('/dashboard')
+  return { success: true }
+}
+
+export async function deleteItems(ids: string[]) {
+  const supabase = await createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+  
+  if (!user) return { error: 'Not authenticated' }
+
+  const { error } = await supabase
+    .from('items')
+    .delete()
+    .in('id', ids)
+    .eq('user_id', user.id)
+
+  if (error) {
+    return { error: error.message }
+  }
+
+  revalidatePath('/dashboard')
+  return { success: true }
+}
+
+export async function updateItem(id: string, formData: FormData) {
+  const supabase = await createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+  
+  if (!user) return { error: 'Not authenticated' }
+
+  const name = formData.get('name') as string
+  const quantity = parseInt(formData.get('quantity') as string)
+  const cost_price = formData.get('cost_price') ? parseFloat(formData.get('cost_price') as string) : null
+  const selling_price = formData.get('selling_price') ? parseFloat(formData.get('selling_price') as string) : null
+
+  const { error } = await supabase
+    .from('items')
+    .update({
+      name,
+      quantity,
+      cost_price,
+      selling_price
+    })
+    .eq('id', id)
+    .eq('user_id', user.id)
 
   if (error) {
     return { error: error.message }

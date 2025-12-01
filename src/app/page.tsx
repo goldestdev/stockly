@@ -1,75 +1,168 @@
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
-import { ArrowRight, CheckCircle2 } from 'lucide-react'
+import { ArrowRight, CheckCircle2, BarChart3, ShieldCheck, Zap } from 'lucide-react'
 import { ThemeToggle } from '@/components/theme-toggle'
 
 export default function LandingPage() {
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-background relative overflow-hidden selection:bg-primary/20">
+      {/* Background Gradients */}
+      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[1000px] h-[600px] bg-primary/20 rounded-full blur-[120px] -z-10 opacity-50" />
+      <div className="absolute bottom-0 right-0 w-[800px] h-[600px] bg-blue-500/10 rounded-full blur-[120px] -z-10 opacity-30" />
+
       {/* Navigation */}
-      <nav className="flex items-center justify-between p-6 max-w-7xl mx-auto">
-        <div className="text-2xl font-bold tracking-tight text-primary">Stockly</div>
-        <div className="flex gap-4 items-center">
-          <ThemeToggle />
-          <Link href="/login">
-            <Button variant="ghost">Log in</Button>
-          </Link>
-          <Link href="/signup">
-            <Button>Get Started</Button>
-          </Link>
+      <nav className="fixed top-0 left-0 right-0 z-50 glass border-b border-white/10">
+        <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <div className="h-8 w-8 rounded-lg bg-primary flex items-center justify-center text-white font-bold">S</div>
+            <span className="text-xl font-bold tracking-tight">Stockly</span>
+          </div>
+          <div className="flex gap-4 items-center">
+            <ThemeToggle />
+            <Link href="/login">
+              <Button variant="ghost" className="hover:bg-primary/10 hover:text-primary">Log in</Button>
+            </Link>
+            <Link href="/signup">
+              <Button className="bg-primary hover:bg-primary/90 text-white shadow-lg shadow-primary/20 transition-all hover:scale-105">
+                Get Started
+              </Button>
+            </Link>
+          </div>
         </div>
       </nav>
 
       {/* Hero Section */}
-      <main className="flex flex-col items-center justify-center px-4 py-20 text-center max-w-4xl mx-auto">
-        <div className="inline-flex items-center rounded-full border px-3 py-1 text-sm font-medium text-muted-foreground mb-8">
-          <span className="flex h-2 w-2 rounded-full bg-emerald-500 mr-2"></span>
-          Simple Inventory for Vendors
-        </div>
-        
-        <h1 className="text-5xl font-bold tracking-tight text-gray-900 sm:text-7xl mb-6">
-          Stop Losing Sales. <br />
-          <span className="text-primary">Start Tracking Stock.</span>
-        </h1>
-        
-        <p className="text-xl text-gray-600 mb-10 max-w-2xl">
-          The dead-simple inventory tracker for vendors who sell clothes, shoes, wigs, and perfumes. 
-          No complex features, just what you need to keep selling.
-        </p>
+      <main className="pt-32 pb-20 px-6">
+        <div className="max-w-5xl mx-auto text-center space-y-8">
+          <div className="inline-flex items-center rounded-full border border-primary/20 bg-primary/5 px-4 py-1.5 text-sm font-medium text-primary animate-in fade-in slide-in-from-bottom-4 duration-1000">
+            <span className="flex h-2 w-2 rounded-full bg-primary mr-2 animate-pulse"></span>
+            The #1 Inventory Tracker for Modern Vendors
+          </div>
+          
+          <h1 className="text-5xl md:text-7xl font-bold tracking-tight animate-in fade-in slide-in-from-bottom-8 duration-1000 delay-100">
+            Stop Losing Sales. <br />
+            <span className="text-gradient">Start Tracking Growth.</span>
+          </h1>
+          
+          <p className="text-xl text-muted-foreground max-w-2xl mx-auto animate-in fade-in slide-in-from-bottom-8 duration-1000 delay-200">
+            The dead-simple inventory tracker designed for vendors who sell clothes, shoes, wigs, and perfumes. 
+            No complex spreadsheets, just pure profit.
+          </p>
 
-        <div className="flex flex-col sm:flex-row gap-4 w-full justify-center">
-          <Link href="/signup">
-            <Button size="lg" className="h-12 px-8 text-lg w-full sm:w-auto">
-              Start for Free <ArrowRight className="ml-2 h-5 w-5" />
-            </Button>
-          </Link>
+          <div className="flex flex-col sm:flex-row gap-4 justify-center pt-4 animate-in fade-in slide-in-from-bottom-8 duration-1000 delay-300">
+            <Link href="/signup">
+              <Button size="lg" className="h-14 px-8 text-lg rounded-full bg-primary hover:bg-primary/90 text-white shadow-xl shadow-primary/25 transition-all hover:scale-105">
+                Start for Free <ArrowRight className="ml-2 h-5 w-5" />
+              </Button>
+            </Link>
+            <Link href="#features">
+              <Button size="lg" variant="outline" className="h-14 px-8 text-lg rounded-full border-2 hover:bg-secondary/50">
+                See How It Works
+              </Button>
+            </Link>
+          </div>
+
+          {/* Hero Image / Dashboard Preview */}
+          <div className="mt-20 relative mx-auto max-w-4xl animate-in fade-in slide-in-from-bottom-12 duration-1000 delay-500">
+            <div className="absolute -inset-1 bg-gradient-to-r from-primary to-blue-600 rounded-2xl blur opacity-20"></div>
+            <div className="relative rounded-2xl border bg-card/50 backdrop-blur-xl shadow-2xl overflow-hidden">
+              <div className="grid grid-cols-1 md:grid-cols-3 divide-y md:divide-y-0 md:divide-x border-b bg-card/50">
+                <div className="p-6 flex items-center gap-4">
+                  <div className="h-10 w-10 rounded-full bg-green-100 dark:bg-green-900/30 flex items-center justify-center text-green-600">
+                    <Zap className="h-5 w-5" />
+                  </div>
+                  <div className="text-left">
+                    <p className="text-sm text-muted-foreground">Total Sales</p>
+                    <p className="text-xl font-bold">₦2.4M</p>
+                  </div>
+                </div>
+                <div className="p-6 flex items-center gap-4">
+                  <div className="h-10 w-10 rounded-full bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center text-blue-600">
+                    <BarChart3 className="h-5 w-5" />
+                  </div>
+                  <div className="text-left">
+                    <p className="text-sm text-muted-foreground">Active Items</p>
+                    <p className="text-xl font-bold">142</p>
+                  </div>
+                </div>
+                <div className="p-6 flex items-center gap-4">
+                  <div className="h-10 w-10 rounded-full bg-orange-100 dark:bg-orange-900/30 flex items-center justify-center text-orange-600">
+                    <ShieldCheck className="h-5 w-5" />
+                  </div>
+                  <div className="text-left">
+                    <p className="text-sm text-muted-foreground">Low Stock</p>
+                    <p className="text-xl font-bold">3 Items</p>
+                  </div>
+                </div>
+              </div>
+              <div className="p-8 bg-card/30">
+                <div className="space-y-4">
+                  {[1, 2, 3].map((i) => (
+                    <div key={i} className="flex items-center justify-between p-4 rounded-xl bg-background/50 border shadow-sm">
+                      <div className="flex items-center gap-4">
+                        <div className="h-10 w-10 rounded-lg bg-secondary animate-pulse"></div>
+                        <div className="space-y-2">
+                          <div className="h-4 w-32 rounded bg-secondary animate-pulse"></div>
+                          <div className="h-3 w-20 rounded bg-secondary animate-pulse"></div>
+                        </div>
+                      </div>
+                      <div className="h-8 w-24 rounded bg-secondary animate-pulse"></div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
 
         {/* Features Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mt-24 w-full text-left">
-          <div className="p-6 rounded-2xl bg-gray-50 border border-gray-100">
-            <div className="h-10 w-10 rounded-full bg-emerald-100 flex items-center justify-center mb-4">
-              <CheckCircle2 className="h-5 w-5 text-emerald-600" />
-            </div>
-            <h3 className="text-lg font-semibold mb-2">Track Stock Instantly</h3>
-            <p className="text-gray-500">Know exactly what you have. Update quantities with a single tap as you sell.</p>
+        <div id="features" className="max-w-6xl mx-auto mt-32">
+          <div className="text-center mb-16">
+            <h2 className="text-3xl font-bold tracking-tight mb-4">Everything you need to grow</h2>
+            <p className="text-muted-foreground max-w-2xl mx-auto">
+              Powerful features packed into a simple, easy-to-use interface.
+            </p>
           </div>
-          <div className="p-6 rounded-2xl bg-gray-50 border border-gray-100">
-            <div className="h-10 w-10 rounded-full bg-red-100 flex items-center justify-center mb-4">
-              <CheckCircle2 className="h-5 w-5 text-red-600" />
-            </div>
-            <h3 className="text-lg font-semibold mb-2">Low Stock Alerts</h3>
-            <p className="text-gray-500">Never run out of best-sellers. See what needs restocking before it's too late.</p>
-          </div>
-          <div className="p-6 rounded-2xl bg-gray-50 border border-gray-100">
-            <div className="h-10 w-10 rounded-full bg-blue-100 flex items-center justify-center mb-4">
-              <CheckCircle2 className="h-5 w-5 text-blue-600" />
-            </div>
-            <h3 className="text-lg font-semibold mb-2">Mobile Friendly</h3>
-            <p className="text-gray-500">Designed for your phone. Use it at the market, shop, or on the go.</p>
+          
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            {[
+              {
+                title: "Track Stock Instantly",
+                desc: "Know exactly what you have. Update quantities with a single tap as you sell.",
+                icon: CheckCircle2,
+                color: "text-emerald-500",
+                bg: "bg-emerald-500/10"
+              },
+              {
+                title: "Low Stock Alerts",
+                desc: "Never run out of best-sellers. See what needs restocking before it's too late.",
+                icon: Zap,
+                color: "text-amber-500",
+                bg: "bg-amber-500/10"
+              },
+              {
+                title: "Mobile Friendly",
+                desc: "Designed for your phone. Use it at the market, shop, or on the go.",
+                icon: BarChart3,
+                color: "text-blue-500",
+                bg: "bg-blue-500/10"
+              }
+            ].map((feature, i) => (
+              <div key={i} className="group p-8 rounded-3xl border bg-card hover:shadow-xl hover:shadow-primary/5 transition-all duration-300 hover:-translate-y-1">
+                <div className={`h-12 w-12 rounded-2xl ${feature.bg} flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300`}>
+                  <feature.icon className={`h-6 w-6 ${feature.color}`} />
+                </div>
+                <h3 className="text-xl font-bold mb-3">{feature.title}</h3>
+                <p className="text-muted-foreground leading-relaxed">{feature.desc}</p>
+              </div>
+            ))}
           </div>
         </div>
       </main>
+      
+      <footer className="border-t py-12 text-center text-sm text-muted-foreground">
+        <p>© 2024 Stockly. All rights reserved.</p>
+      </footer>
     </div>
   )
 }
