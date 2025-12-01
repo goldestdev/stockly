@@ -2,6 +2,9 @@ import { createClient } from '@/utils/supabase/server'
 import { redirect } from 'next/navigation'
 import { InventoryList } from '@/components/inventory-list'
 import { MetricsCards } from '@/components/metrics-cards'
+
+import { SalesChart } from '@/components/sales-chart'
+import { RecentSales } from '@/components/recent-sales'
 import { Button } from '@/components/ui/button'
 import { Plus } from 'lucide-react'
 import Link from 'next/link'
@@ -28,6 +31,42 @@ export default async function Home() {
     .from('items')
     .select('*')
     .order('created_at', { ascending: false })
+
+  // Fetch sales for the last 7 days for the chart
+  const sevenDaysAgo = new Date()
+  sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7)
+
+  const { data: chartSales } = await supabase
+    .from('sales')
+    .select('created_at, total_price')
+    .gte('created_at', sevenDaysAgo.toISOString())
+    .order('created_at', { ascending: true })
+
+  // Fetch all sales for metrics
+  const { data: allSales } = await supabase
+    .from('sales')
+    .select('quantity, total_price')
+
+  // Fetch recent sales with item details
+  const { data: recentSales } = await supabase
+    .from('sales')
+    .select('*, items(name)')
+    .order('created_at', { ascending: false })
+    .limit(5)
+
+  // Aggregate sales by date
+  const salesData = (chartSales || []).reduce((acc: any[], sale) => {
+    const date = new Date(sale.created_at).toLocaleDateString('en-US', { weekday: 'short' })
+    const existing = acc.find(item => item.date === date)
+    
+    if (existing) {
+      existing.amount += sale.total_price
+    } else {
+      acc.push({ date, amount: sale.total_price })
+    }
+    
+    return acc
+  }, [])
 
   return (
     <div className="min-h-screen bg-background pb-20">
@@ -66,8 +105,13 @@ export default async function Home() {
         </div>
 
         {/* Metrics */}
-        <div className="animate-in fade-in slide-in-from-bottom-4 duration-500 delay-100">
-          <MetricsCards items={items || []} />
+
+        <div className="animate-in fade-in slide-in-from-bottom-4 duration-500 delay-100 space-y-8">
+          <MetricsCards items={items || []} sales={allSales || []} />
+          <div className="grid gap-4 md:grid-cols-7">
+            <SalesChart data={salesData} />
+            <RecentSales sales={recentSales || []} />
+          </div>
         </div>
         
         {/* Inventory List */}
