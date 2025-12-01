@@ -73,7 +73,7 @@ export default async function Home() {
       
       <main className="md:pl-64 min-h-screen transition-all duration-200 ease-in-out">
         {/* Header */}
-        <header className="sticky top-0 z-30 w-full border-b bg-background/80 backdrop-blur-md px-6 h-16 flex items-center justify-between">
+        <header className="sticky top-0 z-30 w-full border-b bg-background/80 backdrop-blur-md px-6 pl-16 md:pl-6 h-16 flex items-center justify-between">
           <div className="flex items-center gap-4">
             <h1 className="text-xl font-semibold tracking-tight">Dashboard</h1>
             <span className="text-xs text-muted-foreground hidden md:inline-block">
