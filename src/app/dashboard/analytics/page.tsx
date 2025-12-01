@@ -2,12 +2,10 @@ import { createClient } from '@/utils/supabase/server'
 import { redirect } from 'next/navigation'
 import { MetricsCards } from '@/components/metrics-cards'
 import { SalesChart } from '@/components/sales-chart'
-import { RecentSales } from '@/components/recent-sales'
 import { Button } from '@/components/ui/button'
-import { Plus, Search, Bell } from 'lucide-react'
-import Link from 'next/link'
+import { Search, Bell, Download } from 'lucide-react'
 
-export default async function DashboardOverview() {
+export default async function AnalyticsPage() {
   const supabase = await createClient()
 
   const {
@@ -37,13 +35,6 @@ export default async function DashboardOverview() {
     .from('sales')
     .select('quantity, total_price')
 
-  // Fetch recent sales with item details
-  const { data: recentSales } = await supabase
-    .from('sales')
-    .select('*, items(name)')
-    .order('created_at', { ascending: false })
-    .limit(5)
-
   // Aggregate sales by date for chart
   const salesData = (chartSales || []).reduce((acc: any[], sale) => {
     const date = new Date(sale.created_at).toLocaleDateString('en-US', { weekday: 'short' })
@@ -63,9 +54,9 @@ export default async function DashboardOverview() {
       {/* Header */}
       <header className="sticky top-0 z-30 w-full border-b bg-background/80 backdrop-blur-md px-6 pl-16 md:pl-6 h-16 flex items-center justify-between">
         <div className="flex items-center gap-4">
-          <h1 className="text-xl font-semibold tracking-tight">Overview</h1>
+          <h1 className="text-xl font-semibold tracking-tight">Analytics</h1>
           <span className="text-xs text-muted-foreground hidden md:inline-block">
-            {new Date().toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}
+            Detailed insights into your business performance
           </span>
         </div>
         <div className="flex items-center gap-4">
@@ -76,35 +67,20 @@ export default async function DashboardOverview() {
             <Bell className="h-5 w-5" />
             <span className="absolute top-2 right-2 h-2 w-2 rounded-full bg-primary" />
           </Button>
-          <Link href="/items/new">
-            <Button size="sm" className="bg-primary hover:bg-primary/90 text-white shadow-lg shadow-primary/20 transition-all hover:scale-105">
-              <Plus className="mr-2 h-4 w-4" />
-              Add Item
-            </Button>
-          </Link>
+          <Button size="sm" variant="outline" className="hidden md:flex">
+            <Download className="mr-2 h-4 w-4" />
+            Export Report
+          </Button>
         </div>
       </header>
 
       <div className="p-6 space-y-8 max-w-7xl mx-auto">
-        {/* Welcome Section */}
-        <div className="flex flex-col gap-2">
-          <h2 className="text-3xl font-bold tracking-tight">
-            Welcome back, {user.user_metadata.full_name?.split(' ')[0] || 'Vendor'} 👋
-          </h2>
-          <p className="text-muted-foreground">
-            Here's what's happening with your store today.
-          </p>
-        </div>
-
-        {/* Metrics */}
-        <div className="animate-in fade-in slide-in-from-bottom-4 duration-500 delay-100">
+        <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
           <MetricsCards items={items || []} sales={allSales || []} />
         </div>
 
-        {/* Charts & Recent Sales */}
-        <div className="grid gap-6 md:grid-cols-7 animate-in fade-in slide-in-from-bottom-4 duration-500 delay-200">
+        <div className="grid gap-6 md:grid-cols-1 animate-in fade-in slide-in-from-bottom-4 duration-500 delay-100">
           <SalesChart data={salesData} />
-          <RecentSales sales={recentSales || []} />
         </div>
       </div>
     </>
