@@ -3,16 +3,19 @@
 Stockly is a mobile-first inventory management SaaS designed specifically for small vendors (Instagram sellers, WhatsApp merchants, etc.) to track their stock, sales, and profits.
 
 ## 🚀 Live Demo
-**[https://stockly-three-omega.vercel.app/dashboard](https://stockly-three-omega.vercel.app/dashboard)**
+**[https://stockly-three-omega.vercel.app/](https://stockly-three-omega.vercel.app/)**
 
 ## ✨ Key Features
 
 - **📦 Inventory Tracking**: Easily add items, track quantities, and manage stock levels.
 - **💰 Profit Tracking**: Real-time calculation of total inventory value, potential revenue, and profit.
 - **🔔 Low Stock Alerts**: Automatic email notifications (via Resend) when items run low.
+- **📊 Dashboard Analytics**: Visual charts and real-time metrics to track business growth.
+- **📝 Sales Recording**: Record transactions instantly and view recent sales history.
+- **🔍 Smart Search & Filter**: Quickly find inventory items and filter by stock status.
 - **🔐 Subscription Gating**:
     - **Free Plan**: Limited to 15 items.
-    - **Pro Plan**: Unlimited items for ₦500/month (via Paystack).
+    - **Pro Plan**: Unlimited items for ₦1,500/month (via Paystack).
 - **🌓 Dark Mode**: Beautiful, premium dark theme that syncs with system settings.
 - **📱 Mobile First**: Optimized for use on smartphones.
 
@@ -68,6 +71,7 @@ Stockly is a mobile-first inventory management SaaS designed specifically for sm
 The project uses Supabase with the following main tables:
 - `profiles`: Stores user details, subscription plan (`free` or `pro`), and theme preference.
 - `items`: Stores inventory items, quantities, costs, and prices.
+- `sales`: Records transaction history, quantities sold, and revenue.
 
 ## 🚀 Deployment
 
