@@ -3,7 +3,7 @@
 Stockly is a mobile-first inventory management SaaS designed specifically for small vendors (Instagram sellers, WhatsApp merchants, etc.) to track their stock, sales, and profits.
 
 ## 🚀 Live Demo
-**[https://stockly-qg7583t9z-abdullahi-golds-projects.vercel.app](https://stockly-qg7583t9z-abdullahi-golds-projects.vercel.app)**
+**[https://stockly-three-omega.vercel.app/dashboard](https://stockly-three-omega.vercel.app/dashboard)**
 
 ## ✨ Key Features
 
