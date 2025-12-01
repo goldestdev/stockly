@@ -66,7 +66,7 @@ export function DashboardSidebar({ className, userEmail, plan }: SidebarProps) {
       {/* Mobile Trigger */}
       <Button
         variant="ghost"
-        className="md:hidden fixed top-4 left-4 z-50"
+        className="md:hidden fixed top-3 left-4 z-50"
         size="icon"
         onClick={() => setIsOpen(!isOpen)}
       >
