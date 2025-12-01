@@ -15,3 +15,12 @@ export type Profile = {
   plan: 'free' | 'pro'
   created_at: string
 }
+
+export type Sale = {
+  id: string
+  user_id: string
+  item_id: string | null
+  quantity: number
+  total_price: number
+  created_at: string
+}

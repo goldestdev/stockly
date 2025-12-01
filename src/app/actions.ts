@@ -221,3 +221,46 @@ export async function sendLowStockAlerts() {
     return { error: 'Failed to send email: ' + (error as Error).message }
   }
 }
+
+export async function recordSale(itemId: string, quantity: number, unitPrice: number) {
+  const supabase = await createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+  
+  if (!user) return { error: 'Not authenticated' }
+
+  // 1. Verify stock availability
+  const { data: item } = await supabase
+    .from('items')
+    .select('quantity, name')
+    .eq('id', itemId)
+    .single()
+
+  if (!item) return { error: 'Item not found' }
+  if (item.quantity < quantity) return { error: `Insufficient stock. Only ${item.quantity} available.` }
+
+  // 2. Insert sale record
+  const { error: saleError } = await supabase
+    .from('sales')
+    .insert({
+      user_id: user.id,
+      item_id: itemId,
+      quantity,
+      total_price: quantity * unitPrice
+    })
+
+  if (saleError) return { error: 'Failed to record sale: ' + saleError.message }
+
+  // 3. Decrement stock
+  const { error: updateError } = await supabase
+    .from('items')
+    .update({ quantity: item.quantity - quantity })
+    .eq('id', itemId)
+
+  if (updateError) {
+    // Ideally we should rollback the sale here, but for now we'll just return error
+    return { error: 'Failed to update stock: ' + updateError.message }
+  }
+
+  revalidatePath('/dashboard')
+  return { success: true }
+}

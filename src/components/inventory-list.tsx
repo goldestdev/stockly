@@ -2,9 +2,9 @@
 
 import { Item } from '@/types'
 import { Badge } from '@/components/ui/badge'
-import { Plus, Minus, PackageOpen, MoreVertical, Trash, Pencil, CheckSquare, Square } from 'lucide-react'
+import { Plus, Minus, PackageOpen, MoreVertical, Trash, Pencil, CheckSquare, Square, DollarSign, Search, Filter } from 'lucide-react'
 import { Button } from '@/components/ui/button'
-import { updateQuantity, deleteItem, deleteItems } from '@/app/actions'
+import { updateQuantity, deleteItem, deleteItems, recordSale } from '@/app/actions'
 import { useState, useEffect } from 'react'
 import { cn } from '@/lib/utils'
 import {
@@ -24,6 +24,16 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog"
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
 import { toast } from 'sonner'
 import Link from 'next/link'
 
@@ -34,6 +44,31 @@ interface InventoryListProps {
 export function InventoryList({ items: initialItems }: InventoryListProps) {
   const [items, setItems] = useState<Item[]>(initialItems)
   const [selectedItems, setSelectedItems] = useState<Set<string>>(new Set())
+  const [itemToSell, setItemToSell] = useState<Item | null>(null)
+  const [sellQuantity, setSellQuantity] = useState(1)
+  const [isSelling, setIsSelling] = useState(false)
+  const [searchQuery, setSearchQuery] = useState('')
+  const [filterType, setFilterType] = useState('all')
+  const [mounted, setMounted] = useState(false)
+
+  useEffect(() => {
+    setMounted(true)
+  }, [])
+
+  const filteredItems = items.filter(item => {
+    const matchesSearch = item.name.toLowerCase().includes(searchQuery.toLowerCase())
+    
+    if (!matchesSearch) return false
+
+    switch (filterType) {
+      case 'low_stock':
+        return item.quantity <= item.low_stock_threshold
+      case 'out_of_stock':
+        return item.quantity === 0
+      default:
+        return true
+    }
+  })
 
   useEffect(() => {
     setItems(initialItems)
@@ -97,6 +132,38 @@ export function InventoryList({ items: initialItems }: InventoryListProps) {
     }
   }
 
+  const onSellClick = (item: Item) => {
+    setItemToSell(item)
+    setSellQuantity(1)
+  }
+
+  const confirmSale = async () => {
+    if (!itemToSell) return
+
+    if (sellQuantity <= 0) {
+      toast.error('Quantity must be greater than 0')
+      return
+    }
+
+    if (sellQuantity > itemToSell.quantity) {
+      toast.error('Insufficient stock')
+      return
+    }
+
+    setIsSelling(true)
+    const result = await recordSale(itemToSell.id, sellQuantity, itemToSell.selling_price || 0)
+    setIsSelling(false)
+
+    if (result?.error) {
+      toast.error(result.error)
+    } else {
+      toast.success('Sale recorded!')
+      // Update local state
+      setItems(items.map(i => i.id === itemToSell.id ? { ...i, quantity: i.quantity - sellQuantity } : i))
+      setItemToSell(null)
+    }
+  }
+
   if (items.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center py-16 text-center">
@@ -113,6 +180,46 @@ export function InventoryList({ items: initialItems }: InventoryListProps) {
 
   return (
     <div className="space-y-4">
+
+      <div className="flex flex-col sm:flex-row gap-4 justify-between">
+        <div className="relative flex-1">
+          <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+          <Input
+            placeholder="Search items..."
+            className="pl-9"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+          />
+        </div>
+
+        {mounted ? (
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="outline" className="gap-2">
+                <Filter className="h-4 w-4" />
+                Filter: {filterType === 'all' ? 'All Items' : filterType === 'low_stock' ? 'Low Stock' : 'Out of Stock'}
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuItem onClick={() => setFilterType('all')}>
+                All Items
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => setFilterType('low_stock')}>
+                Low Stock
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => setFilterType('out_of_stock')}>
+                Out of Stock
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        ) : (
+          <Button variant="outline" className="gap-2" disabled>
+            <Filter className="h-4 w-4" />
+            Filter: All Items
+          </Button>
+        )}
+      </div>
+
       <div className="flex items-center justify-between px-1">
         <div className="flex items-center gap-2">
           <Button
@@ -166,7 +273,12 @@ export function InventoryList({ items: initialItems }: InventoryListProps) {
       </div>
 
       <ul className="space-y-3">
-        {items.map((item) => {
+        {filteredItems.length === 0 && (
+           <div className="text-center py-8 text-muted-foreground">
+             No items found matching your search.
+           </div>
+        )}
+        {filteredItems.map((item) => {
           const isLowStock = item.quantity <= item.low_stock_threshold
           const isOut = item.quantity === 0
           const isSelected = selectedItems.has(item.id)
@@ -249,6 +361,10 @@ export function InventoryList({ items: initialItems }: InventoryListProps) {
                         Edit
                       </DropdownMenuItem>
                     </Link>
+                    <DropdownMenuItem onClick={() => onSellClick(item)} className="cursor-pointer">
+                      <DollarSign className="mr-2 h-4 w-4" />
+                      Record Sale
+                    </DropdownMenuItem>
                     <DropdownMenuItem onClick={() => handleDelete(item.id)} className="text-red-600 focus:text-red-600">
                       <Trash className="mr-2 h-4 w-4" />
                       Delete
@@ -260,6 +376,49 @@ export function InventoryList({ items: initialItems }: InventoryListProps) {
           )
         })}
       </ul>
+
+
+      <Dialog open={!!itemToSell} onOpenChange={(open) => !open && setItemToSell(null)}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Record Sale</DialogTitle>
+            <DialogDescription>
+              Record a sale for {itemToSell?.name}. This will deduct from your inventory.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="grid gap-4 py-4">
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label htmlFor="quantity" className="text-right">
+                Quantity
+              </Label>
+              <Input
+                id="quantity"
+                type="number"
+                value={sellQuantity}
+                onChange={(e) => setSellQuantity(parseInt(e.target.value) || 0)}
+                className="col-span-3"
+                min={1}
+                max={itemToSell?.quantity}
+              />
+            </div>
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label className="text-right">Total Price</Label>
+              <div className="col-span-3 font-semibold">
+                {itemToSell && (
+                  new Intl.NumberFormat('en-NG', { style: 'currency', currency: 'NGN' })
+                    .format(sellQuantity * (itemToSell.selling_price || 0))
+                )}
+              </div>
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setItemToSell(null)}>Cancel</Button>
+            <Button onClick={confirmSale} disabled={isSelling}>
+              {isSelling ? 'Recording...' : 'Confirm Sale'}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   )
 }
