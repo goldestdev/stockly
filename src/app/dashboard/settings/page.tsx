@@ -6,6 +6,7 @@ import { Label } from '@/components/ui/label'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import { Search, Bell, User, CreditCard, Moon } from 'lucide-react'
+import Link from 'next/link'
 
 export default async function SettingsPage() {
   const supabase = await createClient()
@@ -87,9 +88,17 @@ export default async function SettingsPage() {
                 <p className="font-medium">Current Plan</p>
                 <p className="text-sm text-muted-foreground capitalize">{profile?.plan || 'Free'} Plan</p>
               </div>
-              <Button variant={profile?.plan === 'pro' ? "outline" : "default"}>
-                {profile?.plan === 'pro' ? 'Manage Subscription' : 'Upgrade to Pro'}
-              </Button>
+              {profile?.plan === 'pro' ? (
+                <Button variant="outline" disabled>
+                  Manage Subscription
+                </Button>
+              ) : (
+                <Link href="/upgrade">
+                  <Button>
+                    Upgrade to Pro
+                  </Button>
+                </Link>
+              )}
             </div>
           </CardContent>
         </Card>

@@ -39,7 +39,7 @@ export default async function InventoryPage() {
             <Bell className="h-5 w-5" />
             <span className="absolute top-2 right-2 h-2 w-2 rounded-full bg-primary" />
           </Button>
-          <Link href="/items/new">
+          <Link href="/dashboard/inventory/new">
             <Button size="sm" className="bg-primary hover:bg-primary/90 text-white shadow-lg shadow-primary/20 transition-all hover:scale-105">
               <Plus className="mr-2 h-4 w-4" />
               Add Item

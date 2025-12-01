@@ -355,7 +355,7 @@ export function InventoryList({ items: initialItems }: InventoryListProps) {
                     </Button>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent align="end">
-                    <Link href={`/items/${item.id}/edit`}>
+                    <Link href={`/dashboard/inventory/${item.id}/edit`}>
                       <DropdownMenuItem className="cursor-pointer">
                         <Pencil className="mr-2 h-4 w-4" />
                         Edit
