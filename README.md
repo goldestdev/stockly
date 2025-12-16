@@ -9,9 +9,11 @@ Stockly is a mobile-first inventory management SaaS designed specifically for sm
 
 - **📦 Inventory Tracking**: Easily add items, track quantities, and manage stock levels.
 - **💰 Profit Tracking**: Real-time calculation of total inventory value, potential revenue, and profit.
-- **🔔 Low Stock Alerts**: Automatic email notifications (via Resend) when items run low.
+- **🚀 Smart Onboarding**: Guided setup flow for new users to add their first product in seconds.
+- **📈 Analytics & Reports**: Detailed charts, top-selling products, and revenue breakdowns.
+- **🔔 Low Stock Alerts**: Visual indicators and potential email notifications when items run low.
 - **📊 Dashboard Analytics**: Visual charts and real-time metrics to track business growth.
-- **📝 Sales Recording**: Record transactions instantly and view recent sales history.
+- **📝 Sales Recording**: Record transactions instantly with a dedicated sales dialog.
 - **🔍 Smart Search & Filter**: Quickly find inventory items and filter by stock status.
 - **🔐 Subscription Gating**:
     - **Free Plan**: Limited to 15 items.
