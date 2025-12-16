@@ -1,6 +1,8 @@
 import { createClient } from '@/utils/supabase/server'
 import { redirect } from 'next/navigation'
 import { DashboardSidebar } from '@/components/dashboard-sidebar'
+import { BottomNav } from "@/components/layout/bottom-nav"
+import { Header } from "@/components/layout/header"
 
 export default async function DashboardLayout({
   children,
@@ -24,11 +26,21 @@ export default async function DashboardLayout({
     .single()
 
   return (
-    <div className="min-h-screen bg-background">
-      <DashboardSidebar userEmail={user.email} plan={profile?.plan} />
+    <div className="min-h-screen bg-background pb-20 md:pb-0">
+      <div className="hidden md:block">
+        <DashboardSidebar userEmail={user.email} plan={profile?.plan} />
+      </div>
+
       <main className="md:pl-64 min-h-screen transition-all duration-200 ease-in-out">
-        {children}
+        <div className="md:hidden">
+          <Header />
+        </div>
+        <div className="px-4 py-4 md:p-8 max-w-5xl mx-auto">
+          {children}
+        </div>
       </main>
+
+      <BottomNav />
     </div>
   )
 }
