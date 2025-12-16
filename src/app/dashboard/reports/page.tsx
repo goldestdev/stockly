@@ -62,6 +62,7 @@ export default async function ReportsPage() {
     // Top Selling Items
     const itemSales = new Map<string, number>()
     sales?.forEach(sale => {
+        // @ts-ignore
         const itemName = sale.items?.name || 'Unknown'
         const current = itemSales.get(itemName) || 0
         itemSales.set(itemName, current + sale.quantity)
