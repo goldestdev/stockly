@@ -57,7 +57,7 @@ export function InventoryList({ items: initialItems }: InventoryListProps) {
 
   const filteredItems = items.filter(item => {
     const matchesSearch = item.name.toLowerCase().includes(searchQuery.toLowerCase())
-    
+
     if (!matchesSearch) return false
 
     switch (filterType) {
@@ -76,9 +76,9 @@ export function InventoryList({ items: initialItems }: InventoryListProps) {
 
   const handleUpdate = async (id: string, newQuantity: number) => {
     if (newQuantity < 0) return
-    
+
     setItems(items.map(i => i.id === id ? { ...i, quantity: newQuantity } : i))
-    
+
     const error = await updateQuantity(id, newQuantity)
     if (error) {
       console.error(error)
@@ -241,13 +241,13 @@ export function InventoryList({ items: initialItems }: InventoryListProps) {
             </span>
           )}
         </div>
-        
+
         {selectedItems.size > 0 && (
           <AlertDialog>
             <AlertDialogTrigger asChild>
-              <Button 
-                variant="destructive" 
-                size="sm" 
+              <Button
+                variant="destructive"
+                size="sm"
                 className="h-8"
               >
                 <Trash className="mr-2 h-4 w-4" />
@@ -274,9 +274,9 @@ export function InventoryList({ items: initialItems }: InventoryListProps) {
 
       <ul className="space-y-3">
         {filteredItems.length === 0 && (
-           <div className="text-center py-8 text-muted-foreground">
-             No items found matching your search.
-           </div>
+          <div className="text-center py-8 text-muted-foreground">
+            No items found matching your search.
+          </div>
         )}
         {filteredItems.map((item) => {
           const isLowStock = item.quantity <= item.low_stock_threshold
@@ -284,16 +284,17 @@ export function InventoryList({ items: initialItems }: InventoryListProps) {
           const isSelected = selectedItems.has(item.id)
 
           return (
-            <li 
-              key={item.id} 
+            <li
+              key={item.id}
               className={cn(
-                "flex items-center justify-between rounded-xl border bg-card p-4 shadow-sm transition-all",
-                isLowStock && "border-red-100 bg-red-50/30",
+                "flex items-center justify-between rounded-xl border bg-card p-4 shadow-sm transition-all overflow-hidden",
+                isLowStock && !isOut && "border-l-4 border-l-red-500 bg-red-50/10", // Left border accent for low stock
+                isOut && "border-l-4 border-l-gray-500 opacity-75", // Formatting for sold out
                 isSelected && "border-primary/50 bg-primary/5"
               )}
             >
-              <div className="flex items-center gap-3 flex-1 min-w-0 pr-4">
-                <div 
+              <div className="flex items-center gap-3 flex-1 min-w-0 pr-2">
+                <div
                   className="cursor-pointer text-muted-foreground hover:text-primary transition-colors"
                   onClick={() => toggleSelect(item.id)}
                 >
@@ -306,21 +307,25 @@ export function InventoryList({ items: initialItems }: InventoryListProps) {
 
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2 mb-1">
-                    <p className="font-semibold text-foreground truncate">{item.name}</p>
+                    <p className="font-semibold text-foreground line-clamp-2 leading-tight">{item.name}</p>
+                  </div>
+                  <div className="flex items-center flex-wrap gap-2">
+                    <p className="text-sm text-muted-foreground">
+                      {item.selling_price ? `₦${item.selling_price.toLocaleString()}` : 'No price'}
+                    </p>
                     {isOut ? (
-                       <Badge variant="destructive" className="h-5 px-1.5 text-[10px]">Sold Out</Badge>
+                      <Badge variant="outline" className="h-5 px-1.5 text-[10px] text-muted-foreground border-muted-foreground">Sold Out</Badge>
                     ) : isLowStock ? (
-                      <Badge variant="destructive" className="h-5 px-1.5 text-[10px] bg-red-100 text-red-700 hover:bg-red-200 border-red-200">Low Stock</Badge>
+                      <span className="inline-flex items-center text-[10px] font-medium text-red-600 bg-red-50 px-2 py-0.5 rounded-full border border-red-100">
+                        Low Stock
+                      </span>
                     ) : null}
                   </div>
-                  <p className="text-sm text-muted-foreground">
-                    {item.selling_price ? `₦${item.selling_price.toLocaleString()}` : 'No price'}
-                  </p>
                 </div>
               </div>
-              
-              <div className="flex items-center gap-2">
-                <div className="flex items-center gap-3 bg-background rounded-lg border p-1 shadow-sm">
+
+              <div className="flex items-center gap-1 sm:gap-2">
+                <div className="flex items-center gap-0.5 sm:gap-3 bg-background rounded-lg border p-0.5 sm:p-1 shadow-sm">
                   <Button
                     variant="ghost"
                     size="icon"
@@ -330,7 +335,7 @@ export function InventoryList({ items: initialItems }: InventoryListProps) {
                   >
                     <Minus className="h-4 w-4" />
                   </Button>
-                  
+
                   <span className={cn(
                     "w-8 text-center font-mono font-medium",
                     isLowStock ? "text-red-600" : "text-foreground"
